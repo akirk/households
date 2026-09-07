@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables are render-local state.
 /**
  * Every household you belong to, and where a new one is added. A household
  * with nobody in it is not a household, so adding one puts you in it.

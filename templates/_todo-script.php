@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables are render-local state.
 /**
  * What spares a to-do list the page going away and coming back. Included by
  * every page that has one, and about nothing but the sections it is told to

@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables are render-local state.
 /**
  * The index is your day, not a directory of houses. It reads in two: what the
  * household you are standing in asks of you and what is kept there on one side;

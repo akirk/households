@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables are render-local state.
 /**
  * The chrome every page shares: the styles, and nothing else. The pages are
  * ordinary PHP — they read through Storage and post their changes back to
