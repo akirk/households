@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables are render-local state.
 /**
  * One task, tickable where it is read, and — for whoever writes here — a way to
  * open it in the form above the list. The household is the one the list is of,

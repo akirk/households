@@ -1,5 +1,5 @@
 <?php
-
+// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_query,WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Household lookups intentionally use metadata and taxonomy relationships.
 namespace Households;
 
 /**

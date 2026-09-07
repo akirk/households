@@ -1,5 +1,5 @@
 <?php
-
+// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Household access checks intentionally query taxonomy relationships.
 namespace Households;
 
 /**

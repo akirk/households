@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables are render-local state.
 /**
  * One thing: what it is called, where it lives in each of the houses that keep
  * it, and where it has got to right now. A thing can be in more than one

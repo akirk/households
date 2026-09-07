@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables are render-local state.
 /**
  * Everyone across the households you belong to, where they are today, and
  * the fortnight ahead. It spans households, so it says which one it is
