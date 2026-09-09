@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Households
- * Plugin URI: https://github.com/akirk/households
+ * Plugin URI: https://wpapps.kirk.at/apps/households/
  * Description: Run a household, or several: who is at which home today, what each house needs people to know, the things kept there and what still needs doing.
  * Version: 1.1.0
  * Requires at least: 6.0
