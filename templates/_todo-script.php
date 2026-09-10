@@ -12,5 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-?>
-<script src="<?php echo esc_url( plugins_url( 'assets/households-todo.js', dirname( __DIR__ ) . '/households.php' ) ); ?>?ver=<?php echo esc_attr( filemtime( dirname( __DIR__ ) . '/assets/households-todo.js' ) ); ?>" defer></script>
+wp_app_enqueue_script(
+    'households-todo',
+    plugins_url( 'assets/households-todo.js', dirname( __DIR__ ) . '/households.php' ),
+    array(),
+    filemtime( dirname( __DIR__ ) . '/assets/households-todo.js' ),
+    true,
+    'households'
+);

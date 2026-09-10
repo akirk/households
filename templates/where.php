@@ -407,6 +407,15 @@ require __DIR__ . '/_head.php';
             </section>
         <?php endif; ?>
 <?php if ( $hh_organises ) : ?>
-<script src="<?php echo esc_url( plugins_url( 'assets/households-where.js', dirname( __DIR__ ) . '/households.php' ) ); ?>?ver=<?php echo esc_attr( filemtime( dirname( __DIR__ ) . '/assets/households-where.js' ) ); ?>" defer></script>
+    <?php
+    wp_app_enqueue_script(
+        'households-where',
+        plugins_url( 'assets/households-where.js', dirname( __DIR__ ) . '/households.php' ),
+        array(),
+        filemtime( dirname( __DIR__ ) . '/assets/households-where.js' ),
+        true,
+        'households'
+    );
+    ?>
 <?php endif; ?>
 <?php require __DIR__ . '/_foot.php'; ?>

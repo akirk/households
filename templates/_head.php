@@ -14,6 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 // unsaid, the title falls back to the route the page was matched by — which is
 // a regular expression, and reads like one.
 $hh_title = isset( $hh_title ) && '' !== trim( $hh_title ) ? $hh_title : __( 'Households', 'households' );
+
+wp_app_enqueue_style(
+    'households',
+    plugins_url( 'assets/households.css', dirname( __DIR__ ) . '/households.php' ),
+    array(),
+    filemtime( dirname( __DIR__ ) . '/assets/households.css' ),
+    'households'
+);
 ?>
 <!DOCTYPE html>
 <html <?php wp_app_language_attributes(); ?>>
@@ -22,7 +30,6 @@ $hh_title = isset( $hh_title ) && '' !== trim( $hh_title ) ? $hh_title : __( 'Ho
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php wp_app_the_title( $hh_title ); ?></title>
     <?php wp_app_head(); ?>
-    <link rel="stylesheet" href="<?php echo esc_url( plugins_url( 'assets/households.css', dirname( __DIR__ ) . '/households.php' ) ); ?>?ver=<?php echo esc_attr( filemtime( dirname( __DIR__ ) . '/assets/households.css' ) ); ?>">
 </head>
 <body>
     <?php wp_app_body_open(); ?>
