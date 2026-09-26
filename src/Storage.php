@@ -636,10 +636,11 @@ class Storage {
         }
         $stored = get_post_meta( $post_id, self::META_MOVES, true );
         $history = [];
-        foreach ( array_reverse( is_array( $stored ) ? $stored : [] ) as $move ) {
+        foreach ( array_reverse( is_array( $stored ) ? $stored : [], true ) as $move_id => $move ) {
             $from_id = isset( $move['from_id'] ) ? (int) $move['from_id'] : 0;
             $to_id = isset( $move['to_id'] ) ? (int) $move['to_id'] : 0;
             $history[] = [
+                'id'        => (int) $move_id,
                 'from_id'   => $from_id,
                 'from_name' => $from_id && Access::can_reach( $user_id, $from_id ) ? (string) ( $move['from_name'] ?? '' ) : '',
                 'to_id'     => $to_id,
@@ -648,7 +649,43 @@ class Storage {
                 'who'       => (string) ( $move['who'] ?? '' ),
             ];
         }
+        usort( $history, static function( array $a, array $b ): int {
+            return strcmp( $b['when'], $a['when'] ) ?: $b['id'] <=> $a['id'];
+        } );
         return $history;
+    }
+
+    /** Change only the calendar day of a recorded movement. */
+    public function update_movement_date( int $home_id, int $post_id, int $move_id, string $date ): bool {
+        if ( ! $this->note_belongs_to( $post_id, self::ITEM, $home_id ) ) {
+            return false;
+        }
+        $day = \DateTimeImmutable::createFromFormat( '!Y-m-d', $date, wp_timezone() );
+        if ( ! $day || $day->format( 'Y-m-d' ) !== $date ) {
+            return false;
+        }
+        $moves = get_post_meta( $post_id, self::META_MOVES, true );
+        if ( ! is_array( $moves ) || ! isset( $moves[ $move_id ] ) ) {
+            return false;
+        }
+        $time = preg_match( '/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})$/', (string) ( $moves[ $move_id ]['when'] ?? '' ), $match ) ? $match[1] : ' 00:00:00';
+        $moves[ $move_id ]['when'] = $date . $time;
+        update_post_meta( $post_id, self::META_MOVES, $moves );
+        return true;
+    }
+
+    /** Remove one recorded movement without changing where the thing is now. */
+    public function delete_movement( int $home_id, int $post_id, int $move_id ): bool {
+        if ( ! $this->note_belongs_to( $post_id, self::ITEM, $home_id ) ) {
+            return false;
+        }
+        $moves = get_post_meta( $post_id, self::META_MOVES, true );
+        if ( ! is_array( $moves ) || ! isset( $moves[ $move_id ] ) ) {
+            return false;
+        }
+        unset( $moves[ $move_id ] );
+        update_post_meta( $post_id, self::META_MOVES, array_values( $moves ) );
+        return true;
     }
 
     /**

@@ -268,6 +268,21 @@ require __DIR__ . '/_head.php';
                                     echo $hh_move['who'] ? ' · ' . esc_html( $hh_move['who'] ) : '';
                                     ?>
                                 </div>
+                                <?php if ( $hh_writing ) : ?>
+                                    <div class="actions" style="margin-top:8px">
+                                        <form method="post" class="actions">
+                                            <?php View::fields( 'update_movement_date', [ 'home_id' => $hh_writing, 'note_id' => $hh_thing['id'], 'move_id' => $hh_move['id'] ] ); ?>
+                                            <label><?php echo esc_html__( 'Date', 'households' ); ?>
+                                                <input type="date" name="date" value="<?php echo esc_attr( substr( $hh_move['when'], 0, 10 ) ); ?>" required>
+                                            </label>
+                                            <button type="submit" class="quiet"><?php echo esc_html__( 'Save', 'households' ); ?></button>
+                                        </form>
+                                        <form method="post">
+                                            <?php View::fields( 'delete_movement', [ 'home_id' => $hh_writing, 'note_id' => $hh_thing['id'], 'move_id' => $hh_move['id'] ] ); ?>
+                                            <button type="submit" class="quiet"><?php echo esc_html__( 'Remove', 'households' ); ?></button>
+                                        </form>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </li>
                     <?php endforeach; ?>
