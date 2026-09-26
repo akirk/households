@@ -258,6 +258,7 @@ require __DIR__ . '/_head.php';
                                     <?php
                                     $hh_from = $hh_move['from_name'] ?: ( $hh_move['from_id'] ? __( 'Another household', 'households' ) : __( 'An unknown place', 'households' ) );
                                     $hh_to = $hh_move['to_name'] ?: __( 'Another household', 'households' );
+                                    /* translators: 1: household a thing came from, 2: household it was taken to. */
                                     echo esc_html( sprintf( __( '%1$s → %2$s', 'households' ), $hh_from, $hh_to ) );
                                     ?>
                                 </div>
