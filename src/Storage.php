@@ -47,6 +47,7 @@ class Storage {
     public const META_WHERE = '_households_where';
     public const META_AT    = '_households_at';
     public const META_GOING = '_households_going';
+    public const META_MOVES = '_households_moves';
 
     /** Task meta. */
     public const META_TASK_TYPE = '_households_task_type';
@@ -622,6 +623,35 @@ class Storage {
     }
 
     /**
+     * Where a thing has been taken, newest first. Household names are saved
+     * with the event so the account remains readable if a household is later
+     * renamed or removed, but names outside the reader's households stay
+     * private.
+     *
+     * @return array[] each with its endpoints, when it happened and who said.
+     */
+    public function get_movement_history( int $post_id, int $user_id ): array {
+        if ( ! $this->may_reach_note( $user_id, $post_id, self::ITEM ) ) {
+            return [];
+        }
+        $stored = get_post_meta( $post_id, self::META_MOVES, true );
+        $history = [];
+        foreach ( array_reverse( is_array( $stored ) ? $stored : [] ) as $move ) {
+            $from_id = isset( $move['from_id'] ) ? (int) $move['from_id'] : 0;
+            $to_id = isset( $move['to_id'] ) ? (int) $move['to_id'] : 0;
+            $history[] = [
+                'from_id'   => $from_id,
+                'from_name' => $from_id && Access::can_reach( $user_id, $from_id ) ? (string) ( $move['from_name'] ?? '' ) : '',
+                'to_id'     => $to_id,
+                'to_name'   => $to_id && Access::can_reach( $user_id, $to_id ) ? (string) ( $move['to_name'] ?? '' ) : '',
+                'when'      => (string) ( $move['when'] ?? '' ),
+                'who'       => (string) ( $move['who'] ?? '' ),
+            ];
+        }
+        return $history;
+    }
+
+    /**
      * Put an older wording of the note back. Only the note: the name and where
      * it lives are what they are now, and were not what was asked about.
      */
@@ -700,7 +730,7 @@ class Storage {
         if ( ! $post || self::ITEM !== $post_type || $post_type !== $post->post_type || ! $this->get_home( $home_id ) ) {
             return false;
         }
-        update_post_meta( $post_id, self::META_AT, $home_id );
+        $this->move_note( $post_id, $home_id, get_current_user_id() );
         // Said to be where it was going, it has got there, and there is
         // nothing left to remember: the whole of the plan was to get it here.
         // Said to be anywhere else it is still on its way, and the list it is
@@ -832,12 +862,40 @@ class Storage {
             if ( ! $this->may_reach_note( $user_id, $thing['id'], self::ITEM ) ) {
                 continue;
             }
-            update_post_meta( $thing['id'], self::META_AT, $to_home_id );
+            if ( ! $this->move_note( $thing['id'], $to_home_id, $user_id ) ) {
+                continue;
+            }
             delete_post_meta( $thing['id'], self::META_GOING );
             $gone++;
         }
         $this->going = null;
         return $gone;
+    }
+
+    /** Record a changed location before making it the thing's current one. */
+    private function move_note( int $post_id, int $to_home_id, int $user_id ): bool {
+        $keepers = $this->home_ids_of_post( $post_id );
+        $from = $this->at_of_note( $post_id, $keepers );
+        if ( $from['home_id'] === $to_home_id ) {
+            return false;
+        }
+        $to = $this->get_home( $to_home_id );
+        if ( ! $to ) {
+            return false;
+        }
+        $stored = get_post_meta( $post_id, self::META_MOVES, true );
+        $moves = is_array( $stored ) ? $stored : [];
+        $moves[] = [
+            'from_id'   => (int) $from['home_id'],
+            'from_name' => (string) $from['name'],
+            'to_id'     => (int) $to['id'],
+            'to_name'   => (string) $to['name'],
+            'when'      => current_time( 'mysql' ),
+            'who'       => $this->who_saved( $user_id ),
+        ];
+        update_post_meta( $post_id, self::META_MOVES, $moves );
+        update_post_meta( $post_id, self::META_AT, $to_home_id );
+        return true;
     }
 
     /** It is not going after all, which asks nothing of where it is or lives. */

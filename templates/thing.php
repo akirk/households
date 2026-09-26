@@ -46,6 +46,7 @@ foreach ( $hh_kept as $hh_one ) {
 // Every wording the note has had, newest first. A save that left it alone is
 // not a version of it, so it is not one here either.
 $hh_history = $hh_reach ? View::storage()->get_note_history( $hh_thing['id'], Storage::ITEM ) : [];
+$hh_movements = $hh_reach ? View::storage()->get_movement_history( $hh_thing['id'], $hh_user ) : [];
 
 // Every household of yours, whether or not it has a place for this thing
 // already: what a house says about where it lives is the same question of all
@@ -245,6 +246,33 @@ require __DIR__ . '/_head.php';
                 <?php require __DIR__ . '/_going.php'; ?>
             </div>
         </section>
+
+        <?php if ( $hh_movements ) : ?>
+            <section>
+                <h2><?php echo esc_html__( 'Where it has been taken', 'households' ); ?></h2>
+                <ul class="plain">
+                    <?php foreach ( $hh_movements as $hh_move ) : ?>
+                        <li class="row">
+                            <div class="grow">
+                                <div>
+                                    <?php
+                                    $hh_from = $hh_move['from_name'] ?: ( $hh_move['from_id'] ? __( 'Another household', 'households' ) : __( 'An unknown place', 'households' ) );
+                                    $hh_to = $hh_move['to_name'] ?: __( 'Another household', 'households' );
+                                    echo esc_html( sprintf( __( '%1$s → %2$s', 'households' ), $hh_from, $hh_to ) );
+                                    ?>
+                                </div>
+                                <div class="meta">
+                                    <?php
+                                    echo esc_html( View::when( $hh_move['when'] ) );
+                                    echo $hh_move['who'] ? ' · ' . esc_html( $hh_move['who'] ) : '';
+                                    ?>
+                                </div>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </section>
+        <?php endif; ?>
 
         <?php if ( $hh_history ) : ?>
             <section>
