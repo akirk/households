@@ -687,6 +687,19 @@ class App extends BaseApp {
                 $this->storage->restore_note( $home_id, $this->note_type( $post( 'kind', 'key' ) ), $post( 'note_id', 'int' ), $post( 'revision_id', 'int' ) );
                 break;
 
+            case 'update_movement_date':
+            case 'delete_movement':
+                if ( ! $can_organise ) {
+                    return $this->refuse();
+                }
+                $changed = 'update_movement_date' === $action
+                    ? $this->storage->update_movement_date( $home_id, $post( 'note_id', 'int' ), $post( 'move_id', 'int' ), $post( 'date' ) )
+                    : $this->storage->delete_movement( $home_id, $post( 'note_id', 'int' ), $post( 'move_id', 'int' ) );
+                if ( ! $changed ) {
+                    return $this->refuse();
+                }
+                break;
+
             // Kept at one more household, said afresh where it lives at one it
             // is already kept at, given up by one, said to be at one right now,
             // or said to be going to one. The household each is about is the

@@ -74,7 +74,8 @@ one home; this one is built for the families that have more than one. Built on
   thing itself, and may be a house that does not keep it — a thing taken along
   for the weekend is lent, not moved. A household page lists what it has a
   place for (saying which are away) plus a *Here just now* list of what has
-  been brought to it.
+  been brought to it. Each thing keeps a dated history of the households it
+  was taken between and who recorded the move.
 - **Packing.** Marking a thing as going somewhere sits beside where it is
   rather than instead of it, and so does packing it: a thing in a bag by the
   door is still at the house it was always at. `/households/pack/` gathers
