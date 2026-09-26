@@ -29,7 +29,7 @@ class App extends BaseApp {
 
         // People who log in get a WordPress account with this role: enough to
         // reach the app, nothing else. People who never log in get no account.
-        $this->app->add_role( 'member', __( 'Household Member', 'households' ), [ 'read' => true ] );
+        add_action( 'init', [ $this, 'register_roles' ] );
 
         Access::init();
 
@@ -40,6 +40,10 @@ class App extends BaseApp {
         // before it renders. `route_by_home` has turned away anyone who does
         // not belong here by the time this runs.
         add_action( 'template_redirect', [ $this, 'handle_post' ], 11 );
+    }
+
+    public function register_roles(): void {
+        $this->app->add_role( 'member', __( 'Household Member', 'households' ), [ 'read' => true ] );
     }
 
     protected function get_url_path(): string {
