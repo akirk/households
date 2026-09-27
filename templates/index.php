@@ -187,7 +187,7 @@ require __DIR__ . '/_head.php';
                 </section>
 
                 <?php // A thing is at one household at a time, so this is the shelf you can actually reach today. ?>
-                <section>
+                <section id="hh-things" data-hh-live-section>
                     <div class="row heading">
                         <h2>
                             <?php if ( $hh_where['known'] ) : ?>
@@ -228,10 +228,29 @@ require __DIR__ . '/_head.php';
                             // in it, because it is still on this shelf.
                             $hh_thing_goes = ! empty( $hh_thing['going'] ) ? $hh_thing['going'] : [];
                             $hh_thing_goes_named = ! empty( $hh_thing_goes['home_id'] ) && Access::can_reach( $hh_user, $hh_thing_goes['home_id'] );
+                            $hh_thing_can_pack = $hh_thing_goes_named && current_user_can( 'organise_household', $hh_thing_goes['home_id'] );
                             ?>
                             <li class="row">
                                 <div class="grow">
-                                    <strong><a href="<?php echo esc_url( View::thing_url( $hh_thing['id'] ) ); ?>"><?php echo esc_html( $hh_thing['title'] ); ?></a></strong>
+                                    <?php if ( $hh_thing_can_pack ) : ?>
+                                        <form method="post" class="actions">
+                                            <?php View::fields( 'toggle_packed', [ 'home_id' => $hh_thing_goes['home_id'], 'kind' => 'item', 'note_id' => $hh_thing['id'] ] ); ?>
+                                            <label class="inline">
+                                                <input type="checkbox" data-hh-tick <?php checked( $hh_thing_goes['is_packed'] ); ?>>
+                                                <span class="<?php echo $hh_thing_goes['is_packed'] ? 'done' : ''; ?>">
+                                                    <strong><a href="<?php echo esc_url( View::thing_url( $hh_thing['id'] ) ); ?>"><?php echo esc_html( $hh_thing['title'] ); ?></a></strong>
+                                                </span>
+                                            </label>
+                                            <?php if ( $hh_thing_goes['is_packed'] ) : ?>
+                                                <span class="meta"><?php echo esc_html__( 'Packed', 'households' ); ?></span>
+                                            <?php endif; ?>
+                                            <button type="submit" class="quiet" data-hh-fallback>
+                                                <?php echo $hh_thing_goes['is_packed'] ? esc_html__( 'Not packed', 'households' ) : esc_html__( 'Packed', 'households' ); ?>
+                                            </button>
+                                        </form>
+                                    <?php else : ?>
+                                        <strong><a href="<?php echo esc_url( View::thing_url( $hh_thing['id'] ) ); ?>"><?php echo esc_html( $hh_thing['title'] ); ?></a></strong>
+                                    <?php endif; ?>
                                     <?php if ( $hh_thing['detail'] ) : ?>
                                         <div class="meta"><?php echo esc_html( $hh_thing['detail'] ); ?></div>
                                     <?php endif; ?>
@@ -250,7 +269,7 @@ require __DIR__ . '/_head.php';
                                             $hh_thing_goes['name']
                                         ) );
                                         ?>">
-                                        &rarr;&nbsp;<?php echo esc_html( $hh_thing_goes['name'] ); ?><?php echo $hh_thing_goes['is_packed'] ? '&nbsp;&check;' : ''; ?>
+                                        &rarr;&nbsp;<?php echo esc_html( $hh_thing_goes['name'] ); ?>
                                     </a>
                                 <?php endif; ?>
                             </li>
