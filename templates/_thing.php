@@ -123,6 +123,9 @@ $hh_thing_tick = $hh_thing_writing
                         <strong><a href="<?php echo esc_url( View::thing_url( $hh_thing['id'] ) ); ?>"><?php echo esc_html( $hh_thing['title'] ); ?></a></strong>
                     </span>
                 </label>
+                <?php if ( $hh_thing_goes['is_packed'] ) : ?>
+                    <span class="meta"><?php echo esc_html__( 'Packed', 'households' ); ?></span>
+                <?php endif; ?>
                 <button type="submit" class="quiet" data-hh-fallback>
                     <?php echo $hh_thing_goes['is_packed'] ? esc_html__( 'Not packed', 'households' ) : esc_html__( 'Packed', 'households' ); ?>
                 </button>
