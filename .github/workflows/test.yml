@@ -38,10 +38,15 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          tools: composer, wp-cli
+          tools: composer
           extensions: mysqli, mbstring
           coverage: none
       - run: composer install --no-dev --no-interaction --prefer-dist --no-progress
+      - name: Install WP-CLI in the runner
+        run: |
+          curl --fail --location https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar --output "$RUNNER_TEMP/wp"
+          chmod +x "$RUNNER_TEMP/wp"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
       - name: Prepare disposable WordPress
         run: |
           site="$RUNNER_TEMP/households-wordpress"
