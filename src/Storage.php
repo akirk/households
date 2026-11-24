@@ -321,7 +321,7 @@ class Storage {
             $write['post_content'] = sanitize_textarea_field( (string) $fields['about'] );
         }
         if ( $write ) {
-            $this->write_post( [ 'ID' => $person_id, 'post_author' => get_current_user_id() ] + $write ); // Temporary CI mutation.
+            $this->write_post( [ 'ID' => $person_id ] + $write );
         }
         if ( array_key_exists( 'label', $fields ) ) {
             update_post_meta( $person_id, self::META_LABEL, sanitize_text_field( (string) $fields['label'] ) );
