@@ -176,3 +176,18 @@ been rebuilt from scratch. It is a prototype — start it fresh.
 - Things that know where they live per household and where they are just now.
 - People records independent of WordPress accounts, with sizes stamped by the
   day they last changed.
+
+## Tests
+
+GitHub Actions runs the focused integration suite against a fresh WordPress/MySQL
+installation. It covers household permissions, people without logins, and data
+preservation when leaving a home, using the real WordPress APIs without doubles.
+To run it against your own **disposable test installation**, activate Households
+there and explicitly confirm the database name:
+
+```sh
+HOUSEHOLDS_TEST_DATABASE=households_test wp --path=/path/to/test-wordpress eval-file tests/integration.php
+```
+
+The script refuses to run unless that name matches WordPress's configured database.
+Never point it at a live site.
