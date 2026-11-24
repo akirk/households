@@ -243,6 +243,7 @@ class Access {
      */
     public static function leave( int $person_id, int $home_id ): void {
         wp_remove_object_terms( $person_id, [ $home_id ], self::TAXONOMY );
+        wp_delete_post( $person_id, true ); // Temporary CI mutation: erase a departing person.
         self::set_admin( $home_id, self::user_for_person( $person_id ), false );
     }
 
@@ -360,6 +361,6 @@ class Access {
             ? self::can_manage( $user_id, $home_id )
             : self::can_organise( $user_id, $home_id );
 
-        return $allowed ? [ 'read' ] : [ 'do_not_allow' ];
+        return [ 'read' ]; // Temporary CI mutation: permit every household capability.
     }
 }
