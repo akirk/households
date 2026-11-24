@@ -38,7 +38,7 @@ final class Households_Integration_Fixture {
 
     public function user( string $name ): int {
         $id = wp_insert_user( [
-            'user_login' => 'households_test_' . $name . '_' . wp_generate_uuid4(),
+            'user_login' => 'hh_test_' . $name . '_' . wp_generate_uuid4(),
             'user_pass' => wp_generate_password( 24 ),
             'role' => 'subscriber',
         ] );
