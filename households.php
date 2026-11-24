@@ -5,7 +5,6 @@
  * Description: Run a household, or several: who is at which home today, what each house needs people to know, the things kept there and what still needs doing.
  * Version: 1.1.0
  * Requires at least: 6.0
- * Tested up to: 7.1
  * Requires PHP: 7.4
  * Author: Alex Kirk
  * Author URI: https://alex.kirk.at/

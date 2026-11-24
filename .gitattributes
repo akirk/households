@@ -26,3 +26,6 @@ vendor/**/Tests export-ignore
 
 # Misc
 .DS_Store export-ignore
+
+# Integration tests run against disposable CI WordPress, not the shipped plugin.
+tests export-ignore

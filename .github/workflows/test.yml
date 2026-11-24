@@ -1,0 +1,59 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  wordpress:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: households_test
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h127.0.0.1 -proot --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      HOUSEHOLDS_TEST_DATABASE: households_test
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+          extensions: mysqli, mbstring
+          coverage: none
+      - run: composer install --no-dev --no-interaction --prefer-dist --no-progress
+      - name: Install WP-CLI in the runner
+        run: |
+          curl --fail --location https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar --output "$RUNNER_TEMP/wp"
+          chmod +x "$RUNNER_TEMP/wp"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      - name: Prepare disposable WordPress
+        run: |
+          site="$RUNNER_TEMP/households-wordpress"
+          wp core download --path="$site" --quiet
+          wp config create --path="$site" --dbname=households_test --dbuser=wordpress --dbpass=wordpress --dbhost=127.0.0.1:3306
+          wp core install --path="$site" --url=http://households.test --title="Households tests" --admin_user=ci_admin --admin_password=ci-password --admin_email=ci@example.test --skip-email
+          ln -s "$GITHUB_WORKSPACE" "$site/wp-content/plugins/households"
+          wp plugin activate households --path="$site"
+      - name: Verify household privacy and data preservation
+        run: wp eval-file "$GITHUB_WORKSPACE/tests/integration.php" --path="$RUNNER_TEMP/households-wordpress"
